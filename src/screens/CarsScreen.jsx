@@ -1,8 +1,14 @@
+
+
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import CartSummary from '../components/CartSummary';
+import Mymenu from '../components/Mymenu'; // 👈 IMPORT MENU
 
 const CarsScreen = ({ cart = [], setCart }) => {
+
+  const navigation = useNavigation();
 
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -31,13 +37,10 @@ const CarsScreen = ({ cart = [], setCart }) => {
             {cart.map((item, index) => (
               <View key={index} style={styles.card}>
 
-                {/* DELETE ICON */}
-                <TouchableOpacity
-                  style={styles.deleteBtn}
-                  onPress={() => removeItem(index)}
-                >
-                  <Icon name="delete-outline" size={28} color="#fff" />
-                </TouchableOpacity>
+                {/* 🔥 MENU (3 DOTS) */}
+                <View style={styles.menuBtn}>
+                  <Mymenu onDelete={() => removeItem(index)} />
+                </View>
 
                 <Text style={styles.name}>{item.name}</Text>
 
@@ -61,7 +64,7 @@ const CarsScreen = ({ cart = [], setCart }) => {
               </View>
             ))}
 
-            {/* TOTAL */}
+            {/* TOTAL BOX */}
             <View style={styles.totalBox}>
               <Text style={styles.totalText}>
                 Total: Rs {total}
@@ -73,13 +76,9 @@ const CarsScreen = ({ cart = [], setCart }) => {
 
       </ScrollView>
 
-      {/* FOOTER MESSAGE */}
+      {/* BOTTOM BAR */}
       {cart.length > 0 && (
-        <View style={styles.checkoutBox}>
-          <Text style={styles.successText}>
-            Order Placed Successfully ✅
-          </Text>
-        </View>
+        <CartSummary total={total} navigation={navigation} />
       )}
 
     </View>
@@ -117,16 +116,11 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 
-  deleteBtn: {
+  // 🔥 MENU POSITION
+  menuBtn: {
     position: 'absolute',
     right: 10,
     top: 10,
-    backgroundColor: '#d64343',
-    width: 35,
-    height: 35,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   name: {
@@ -157,7 +151,7 @@ const styles = StyleSheet.create({
   totalBox: {
     marginTop: 10,
     padding: 15,
-    backgroundColor: '#000',
+    backgroundColor: '#000000',
     borderRadius: 10,
   },
 
@@ -166,17 +160,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-
-  checkoutBox: {
-    padding: 10,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-
-  successText: {
-    color: 'green',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });

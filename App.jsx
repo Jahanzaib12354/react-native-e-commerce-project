@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,6 +6,8 @@ import ProductList from './src/screens/ProductList';
 import ProductPage from './src/components/ProductPage';
 import CarsScreen from './src/screens/CarsScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
+
+import { Provider as PaperProvider } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,38 +19,60 @@ const App = () => {
     setCart((prev) => [...prev, item]);
   };
 
+  // 🔥 CLEAR CART FUNCTION (BEST PRACTICE)
+  const clearCart = () => {
+    setCart([]);
+  };
+
   return (
-    <NavigationContainer>
+    <PaperProvider>
 
-      <Stack.Navigator>
+      <NavigationContainer>
 
-        <Stack.Screen
-          name="Home"
-          component={ProductList}
-        />
+        <Stack.Navigator
+          screenOptions={{
+            headerTitleAlign: 'center',
+          }}
+        >
 
-        <Stack.Screen name="Product">
-          {(props) => (
-            <ProductPage {...props} addToCart={addToCart} />
-          )}
-        </Stack.Screen>
+          {/* HOME */}
+          <Stack.Screen
+            name="Home"
+            component={ProductList}
+            options={{
+              headerBackVisible: false,
+            }}
+          />
 
-        
-        
-        <Stack.Screen name="Cars">
-          {(props) => (
-            <CarsScreen {...props} cart={cart} setCart={setCart} />
-          )}
-        </Stack.Screen>
+          {/* PRODUCT */}
+          <Stack.Screen name="Product">
+            {(props) => (
+              <ProductPage {...props} addToCart={addToCart} />
+            )}
+          </Stack.Screen>
 
-        <Stack.Screen
-          name="Checkout"
-          component={CheckoutScreen}
-        />
+          {/* CART */}
+          <Stack.Screen name="Cars">
+            {(props) => (
+              <CarsScreen {...props} cart={cart} setCart={setCart} />
+            )}
+          </Stack.Screen>
 
-      </Stack.Navigator>
+          {/* CHECKOUT (🔥 IMPORTANT FIX HERE) */}
+          <Stack.Screen name="Checkout">
+            {(props) => (
+              <CheckoutScreen
+                {...props}
+                setCart={clearCart}   // ✅ CLEAN RESET FUNCTION PASS
+              />
+            )}
+          </Stack.Screen>
 
-    </NavigationContainer>
+        </Stack.Navigator>
+
+      </NavigationContainer>
+
+    </PaperProvider>
   );
 };
 
